@@ -5,7 +5,7 @@ import Link from 'next/link'
 import {
   LayoutDashboard, PieChart, BarChart2, TrendingUp,
   ArrowLeftRight, CreditCard, Target, Star, Settings,
-  TrendingDown, LogOut, Menu, X,
+  LogOut, Menu, X, Plus, User,
 } from 'lucide-react'
 
 const navItems = [
@@ -18,6 +18,13 @@ const navItems = [
   { href: '/dashboard/goals', icon: Target, label: 'Goals' },
   { href: '/dashboard/watchlist', icon: Star, label: 'Watchlist' },
   { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+]
+
+const bottomNav = [
+  { href: '/dashboard', icon: LayoutDashboard, label: 'Home' },
+  { href: '/dashboard/dse', icon: BarChart2, label: 'DSE' },
+  { href: '/dashboard/transactions', icon: ArrowLeftRight, label: 'Txns' },
+  { href: '/dashboard/settings', icon: User, label: 'Profile' },
 ]
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -145,10 +152,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto scrollbar-thin">
+        <main className="flex-1 overflow-y-auto scrollbar-thin pb-20 lg:pb-0">
           {children}
         </main>
       </div>
+
+      {/* Mobile Bottom Nav */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1a1d27] border-t border-[#2a2d3a] flex items-center justify-around px-2 py-1.5 safe-area-pb">
+        {bottomNav.slice(0, 2).map(({ href, icon: Icon, label }) => {
+          const active = href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href)
+          return (
+            <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl text-[10px] font-medium transition-colors ${active ? 'text-[#ff1a66]' : 'text-[#8b8fa8]'}`}>
+              <Icon className={`w-5 h-5 ${active ? 'text-[#ff1a66]' : 'text-[#8b8fa8]'}`} />
+              {label}
+            </Link>
+          )
+        })}
+
+        {/* Center FAB */}
+        <Link href="/dashboard/transactions?new=1" className="flex flex-col items-center -mt-4">
+          <span className="w-12 h-12 rounded-full bg-[#ff1a66] flex items-center justify-center shadow-lg shadow-[#ff1a66]/40">
+            <Plus className="w-6 h-6 text-white" />
+          </span>
+          <span className="text-[10px] text-[#8b8fa8] mt-0.5 font-medium">New</span>
+        </Link>
+
+        {bottomNav.slice(2).map(({ href, icon: Icon, label }) => {
+          const active = pathname.startsWith(href)
+          return (
+            <Link key={href} href={href} className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl text-[10px] font-medium transition-colors ${active ? 'text-[#ff1a66]' : 'text-[#8b8fa8]'}`}>
+              <Icon className={`w-5 h-5 ${active ? 'text-[#ff1a66]' : 'text-[#8b8fa8]'}`} />
+              {label}
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }
